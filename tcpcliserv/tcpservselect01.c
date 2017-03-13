@@ -1,8 +1,8 @@
 /* include fig01 */
 #include	"unp.h"
 
-int
-main(int argc, char **argv)
+// 使用单进程和select的TCP服务器程序：循环
+int main(int argc, char **argv)
 {
 	int					i, maxi, maxfd, listenfd, connfd, sockfd;
 	int					nready, client[FD_SETSIZE];

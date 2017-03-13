@@ -2,8 +2,8 @@
 #include	"unp.h"
 #include	<limits.h>		/* for OPEN_MAX */
 
-int
-main(int argc, char **argv)
+// 使用 poll 函数的 TCP服务器程序
+int main(int argc, char **argv)
 {
 	int					i, maxi, listenfd, connfd, sockfd;
 	int					nready;
