@@ -36,6 +36,7 @@ int main(int argc, char **argv)
 		rset = allset;		/* structure assignment */
 		nready = Select(maxfd+1, &rset, NULL, NULL, NULL);
 
+		// 监听套接字可读，那么已建立了一个新的连接，接下来调用Accept
 		if (FD_ISSET(listenfd, &rset)) {	/* new client connection */
 			clilen = sizeof(cliaddr);
 			connfd = Accept(listenfd, (SA *) &cliaddr, &clilen);
@@ -45,11 +46,14 @@ int main(int argc, char **argv)
 					ntohs(cliaddr.sin_port));
 #endif
 
-			for (i = 0; i < FD_SETSIZE; i++)
+			for (i = 0; i < FD_SETSIZE; i++) {
+				// 使用 client 数组中的第一个未用项记录这个已连接描述符
 				if (client[i] < 0) {
 					client[i] = connfd;	/* save descriptor */
 					break;
 				}
+			}
+
 			if (i == FD_SETSIZE)
 				err_quit("too many clients");
 
@@ -58,7 +62,9 @@ int main(int argc, char **argv)
 				maxfd = connfd;			/* for select */
 			if (i > maxi)
 				maxi = i;				/* max index in client[] array */
-
+			
+			// 就绪描述符数目减为1，若其值变为0，就可以避免进入下一个for循环
+			// 这样做让我们可以使用select返回值来避免检查未就绪的描述符
 			if (--nready <= 0)
 				continue;				/* no more readable descriptors */
 		}
@@ -66,6 +72,10 @@ int main(int argc, char **argv)
 		for (i = 0; i <= maxi; i++) {	/* check all clients for data */
 			if ( (sockfd = client[i]) < 0)
 				continue;
+
+			// 对于每个现有的客户连接，我们要测试其描述符是否在select返回的描述符集中。
+			// 如果是就从该客户读入一行文本并回射给它
+			// 如果该客户关闭了连接，那么read将返回0，我们于是相应地更新数据结构
 			if (FD_ISSET(sockfd, &rset)) {
 				if ( (n = Read(sockfd, buf, MAXLINE)) == 0) {
 						/*4connection closed by client */

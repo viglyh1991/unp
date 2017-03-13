@@ -24,11 +24,12 @@ void str_cli(FILE *fp, int sockfd)
 		Select(maxfdp1, &rset, NULL, NULL, NULL);
 
 		if (FD_ISSET(sockfd, &rset)) {	/* socket is readable */
+		   // 这里改用 read 和 write 对缓冲区而不是文本进行操作，使得select能够如期地工作
 			if ( (n = Read(sockfd, buf, MAXLINE)) == 0) {
 				// 在套接字遇到EOF时，如果我们已经在标准输入上遇到EOF，那就是正常的终止。
 				if (stdineof == 1)
 					return;		/* normal termination */
-				else // 在标准输入没有遇到EOF,那么服务器进程已过早终止。
+				else // 如果在标准输入没有遇到EOF,那么服务器进程已过早终止。
 					err_quit("str_cli: server terminated prematurely");
 			}
 
@@ -36,12 +37,13 @@ void str_cli(FILE *fp, int sockfd)
 		}
 
 		if (FD_ISSET(fileno(fp), &rset)) {  /* input is readable */
+	       // 这里改用 read 和 write 对缓冲区而不是文本进行操作，使得select能够如期地工作
 			if ( (n = Read(fileno(fp), buf, MAXLINE)) == 0) {
 				// 遇到EOF, 把标志设置为 1
 				stdineof = 1;
 
-				// SHUT_WR: 关闭连接的写这一半，
 				// SHUT_RD: 关闭连接的读这一半，套接字不再有数据可接收，而且套接字接收缓冲区中的现有数据都被丢弃
+				// SHUT_WR: 关闭连接的写这一半，当前留在套接字发送缓冲区中的数据将被发送掉，后跟TCP的正常连接终止序列
 				// SHUT_RDWR: 连接的读半部和写半部都关闭
 				Shutdown(sockfd, SHUT_WR);	/* send FIN */
 				FD_CLR(fileno(fp), &rset);
