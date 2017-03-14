@@ -1,7 +1,7 @@
 #include	"unp.h"
 
-int
-main(int argc, char **argv)
+// 使用 gethostbyname 和 getservbyname 的时间获取客户程序
+int main(int argc, char **argv)
 {
 	int					sockfd, n;
 	char				recvline[MAXLINE + 1];
@@ -15,10 +15,12 @@ main(int argc, char **argv)
 	if (argc != 3)
 		err_quit("usage: daytimetcpcli1 <hostname> <service>");
 
+	// gethostbyname, argv[1] 主机名
 	if ( (hp = gethostbyname(argv[1])) == NULL) {
+		// gethostbyname 查找失败，尝试使用 inet_aton 函数，确定其参数是否已是ASCII格式的地址
 		if (inet_aton(argv[1], &inetaddr) == 0) {
 			err_quit("hostname error for %s: %s", argv[1], hstrerror(h_errno));
-		} else {
+		} else { // 构造一个由相应地址构成的单元素列表
 			inetaddrp[0] = &inetaddr;
 			inetaddrp[1] = NULL;
 			pptr = inetaddrp;
@@ -27,6 +29,7 @@ main(int argc, char **argv)
 		pptr = (struct in_addr **) hp->h_addr_list;
 	}
 
+	// getservbyname, argv[2] 服务名
 	if ( (sp = getservbyname(argv[2], "tcp")) == NULL)
 		err_quit("getservbyname error for %s", argv[2]);
 
@@ -35,10 +38,10 @@ main(int argc, char **argv)
 
 		bzero(&servaddr, sizeof(servaddr));
 		servaddr.sin_family = AF_INET;
-		servaddr.sin_port = sp->s_port;
+		servaddr.sin_port = sp->s_port; // sp->s_port
 		memcpy(&servaddr.sin_addr, *pptr, sizeof(struct in_addr));
-		printf("trying %s\n",
-			   Sock_ntop((SA *) &servaddr, sizeof(servaddr)));
+
+		printf("trying %s\n", Sock_ntop((SA *) &servadd./r, sizeof(servaddr)));
 
 		if (connect(sockfd, (SA *) &servaddr, sizeof(servaddr)) == 0)
 			break;		/* success */
