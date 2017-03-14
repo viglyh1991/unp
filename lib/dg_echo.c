@@ -1,7 +1,7 @@
 #include	"unp.h"
 
-void
-dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen)
+// dg_echo函数: 在数据报套接字上回射文本行
+void dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen)
 {
 	int			n;
 	socklen_t	len;

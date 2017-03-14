@@ -3,6 +3,8 @@
 #include	<limits.h>		/* for OPEN_MAX */
 
 // 使用 poll 函数的 TCP服务器程序
+// int poll(struct pollfd *fdarray, unsigned long nfds, int timeout)
+// struct pollfd: 测试某个给定描述符fd的条件
 int main(int argc, char **argv)
 {
 	int					i, maxi, listenfd, connfd, sockfd;

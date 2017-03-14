@@ -1,7 +1,7 @@
 #include	"unp.h"
 
-int
-main(int argc, char **argv)
+// UDP 回射客户程序
+int main(int argc, char **argv)
 {
 	int					sockfd;
 	struct sockaddr_in	servaddr;

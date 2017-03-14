@@ -1,24 +1,26 @@
 #include	"unp.h"
 
-void
-dg_cli(FILE *fp, int sockfd, const SA *pservaddr, socklen_t servlen)
+// 验证返回的套接字地址的dg_cli函数版本
+void dg_cli(FILE *fp, int sockfd, const SA *pservaddr, socklen_t servlen)
 {
 	int				n;
 	char			sendline[MAXLINE], recvline[MAXLINE + 1];
 	socklen_t		len;
 	struct sockaddr	*preply_addr;
 
-	preply_addr = Malloc(servlen);
+	preply_addr =  Malloc(servlen);
 
 	while (Fgets(sendline, MAXLINE, fp) != NULL) {
 
 		Sendto(sockfd, sendline, strlen(sendline), 0, pservaddr, servlen);
 
 		len = servlen;
+		// 通知内核返回数据报发送者的地址
 		n = Recvfrom(sockfd, recvline, MAXLINE, 0, preply_addr, &len);
+
+		// 先比较长度，然后用 memcmp 比较套接字地址结构本身
 		if (len != servlen || memcmp(pservaddr, preply_addr, len) != 0) {
-			printf("reply from %s (ignored)\n",
-					Sock_ntop(preply_addr, len));
+			printf("reply from %s (ignored)\n", Sock_ntop(preply_addr, len));
 			continue;
 		}
 
