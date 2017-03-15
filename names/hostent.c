@@ -15,14 +15,21 @@ int main(int argc, char **argv)
 	char			str[INET_ADDRSTRLEN];
 	struct hostent	*hptr;
 
-	while (--argc > 0) {
+	while (--argc > 0) 
+	{
 		ptr = *++argv;
 
 		// gethostbyname 把主机名映射成 IPV4地址
-		// struct hostent *gethostbyname(const char *hostname);
-		// 返回一个指向 hostent 结构的指针
-		// 只能返回 IPV4地址 
+		// struct hostent *gethostbyname(const char *hostname);返回一个指向 hostent 结构的指针
+		// 局限：只能返回 IPV4地址, 可用 getaddrinfo 函数
+		
+		// gethostbyaddr
+		// struct hostent *gethostbyaddr(const char *addr, socklen_t len, int family);
+		// 由一个二进制的IP地址找到相应的主机名，与 gethostbyname 相反
+		// addr 是一个指向存放IPv4地址的某个 in_addr 结构的指针，len参数是这个结构的大小，对于 ipv4 地址为4，family为AF_INET
 		if ( (hptr = gethostbyname(ptr)) == NULL) {
+			// hstrerror函数,以 h_errno 值作为唯一的参数，返回的是一个 const char* 指针
+			// h_errno = {HOST_NOT_FOUND, TRY_AGAIN, NO_RECOVERY, NO_DATA};
 			err_msg("gethostbyname error for host: %s: %s", ptr, hstrerror(h_errno));
 			continue;
 		}

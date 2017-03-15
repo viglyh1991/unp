@@ -1,7 +1,7 @@
 #include	"unp.h"
 
-int
-main(int argc, char **argv)
+// 用 Tcp_connect 重新编写的时间获取客户程序
+int main(int argc, char **argv)
 {
 	int				sockfd, n;
 	char			recvline[MAXLINE + 1];
@@ -11,6 +11,7 @@ main(int argc, char **argv)
 	if (argc != 3)
 		err_quit("usage: daytimetcpcli <hostname/IPaddress> <service/port#>");
 
+	// Tcp_connect
 	sockfd = Tcp_connect(argv[1], argv[2]);
 
 	len = sizeof(ss);

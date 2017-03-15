@@ -1,8 +1,8 @@
 #include	"unp.h"
 #include	<time.h>
 
-int
-main(int argc, char **argv)
+// 协议无关的UDP时间获取服务器程序
+int main(int argc, char **argv)
 {
 	int				sockfd;
 	ssize_t			n;

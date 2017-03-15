@@ -1,6 +1,38 @@
 /* include host_serv */
 #include	"unp.h"
 
+/*
+	addrinfo 能处理名字到地址以及服务到端口这两种转换，返回的是一个 sockaddr 结构而不是一个地址列表
+	通过result指针返回一个指向adaddrinfo结构链表的指针
+
+
+	int getaddrinfo(const char *hostname, const char *service,
+					const struct addrinfo *hints, struct addrinfo **result);
+
+	1> TCP 和 UDP 客户进程： 指定 hostname 和 service
+	2> 典型的服务器进程: 只指定 service，同时在 hints 结构中指定 AI_PASSIVE 标志
+		
+*/
+
+/* 例子: 
+	struct addrinfo hints, *res;
+	bezero(&hints, sizeof(hints));
+	hints.ai_flags = AI_CANONNAME;
+	hints.ai_family = AF_INET;
+	getaddrinfo("freebsd4", "domain", &hints, &res);
+*/
+struct about_addrinfo {
+	int ai_flags; // AI_PASSIVE, AI_CANONNAME
+	int ai_family; // AF_XXX
+	int ai_socktype; // SOCK_XXX
+	int ai_protocol; // 0 or IPPROTO_xxx for IPv4 and Ipv6
+	socklen_t ai_addrlen; // length of ai_addr
+	char *ai_canonname; // ptr to canonical name for host
+	struct sockaddr *ai_addr; // ptr to socket address structure
+	struct addrinfo *ai_naxt; // ptr to next structure in linked list 
+};
+
+// host_serv 函数
 struct addrinfo *
 host_serv(const char *host, const char *serv, int family, int socktype)
 {

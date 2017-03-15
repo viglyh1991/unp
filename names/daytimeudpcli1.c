@@ -1,7 +1,7 @@
 #include	"unp.h"
 
-int
-main(int argc, char **argv)
+// 使用 Udp_client 的UDP时间获取客户程序
+int main(int argc, char **argv)
 {
 	int				sockfd, n;
 	char			recvline[MAXLINE + 1];

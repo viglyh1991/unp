@@ -1,8 +1,8 @@
 /* include udp_connect */
 #include	"unp.h"
 
-int
-udp_connect(const char *host, const char *serv)
+// udp_connect 函数： 创建一个已连接UDP套接字
+int udp_connect(const char *host, const char *serv)
 {
 	int				sockfd, n;
 	struct addrinfo	hints, *res, *ressave;

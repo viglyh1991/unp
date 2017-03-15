@@ -1,8 +1,8 @@
 /* include udp_server */
 #include	"unp.h"
 
-int
-udp_server(const char *host, const char *serv, socklen_t *addrlenp)
+//udp_server 为udp服务器创建一个未连接套接字
+int udp_server(const char *host, const char *serv, socklen_t *addrlenp)
 {
 	int				sockfd, n;
 	struct addrinfo	hints, *res, *ressave;
